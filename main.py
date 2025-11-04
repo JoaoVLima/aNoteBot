@@ -6,7 +6,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-app = typer.Typer(name="aNoteBot")
+app = typer.Typer(name="aNoteBot", short_help="Bot para ajudar a fazer anotacoes e de me cobrar atividades")
 console = Console()
 DB = "tasks.db"
 
@@ -16,8 +16,11 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS tasks (
                     id INTEGER PRIMARY KEY,
                     name TEXT,
+                    active INT,
                     status TEXT,
-                    created_at TEXT
+                    created_at TEXT,
+                    edited_at TEXT,
+                    deleted_at TEXT
                 )''')
     conn.commit()
     conn.close()
@@ -26,8 +29,8 @@ def init_db():
 def add(name: str):
     conn = sqlite3.connect(DB)
     c = conn.cursor()
-    c.execute("INSERT INTO tasks (name, status, created_at) VALUES (?, ?, ?)",
-              (name, "pendente", datetime.now().isoformat()))
+    c.execute("INSERT INTO tasks (name, active, status, created_at) VALUES (?, ?, ?, ?)",
+              (name, 1, "pendente", datetime.now().isoformat()))
     conn.commit()
     conn.close()
     console.print(f"Atividade '{name}' adicionada!", style="green")
